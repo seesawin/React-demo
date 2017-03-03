@@ -265,3 +265,80 @@ ReactDOM.render(
         author={comment2.author} />,
     document.getElementById('Composing')
 );
+
+// State and Lifecycle
+function tick1() {
+    const element = (
+        <div>
+            <h1>Hello, world!</h1>
+            <h2>It is {new Date().toLocaleTimeString()}.</h2>
+        </div>
+    );
+    ReactDOM.render(
+        element,
+        document.getElementById('tick1')
+    );
+}
+
+setInterval(tick1, 1000);
+
+function Clock(props) {
+    return (
+        <div>
+            <h1>Hello, world!</h1>
+            <h2>It is {props.date.toLocaleTimeString()}.</h2>
+        </div>
+    );
+}
+
+function tick2() {
+    ReactDOM.render(
+        <Clock date={new Date()} />,
+        document.getElementById('tick2')
+    );
+}
+
+setInterval(tick2, 1000);
+
+// Ideally we want to write this once and have the Clock update itself:
+// To implement this, we need to add "state" to the Clock component.
+class Clock2 extends React.Component {
+    constructor(props) {
+        super(props);
+        // The only place where you can assign this.state is the constructor.
+        this.state = {date: new Date()};
+    }
+
+    render() {
+        return (
+            <div>
+                <h1>Hello, state world!</h1>
+                <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+            </div>
+        );
+    }
+
+    // Adding Lifecycle Methods to a Class
+    componentDidMount() {
+        this.timerID = setInterval(
+            () => this.tick(),
+            1000
+        );
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timerID);
+    }
+
+    tick() {
+        this.setState({
+            date: new Date()
+        });
+    }
+}
+
+ReactDOM.render(
+    <Clock2 />,
+    document.getElementById('tick3')
+);
+

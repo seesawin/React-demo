@@ -372,3 +372,402 @@ ReactDOM.render(
     document.getElementById('Toggle')
 );
 
+// Another difference is that you cannot return false to prevent default behavior in React
+{/*<a href="#" onclick="console.log('The link was clicked.'); return false">*/}
+    {/*Click me*/}
+{/*</a>*/}
+
+function ActionLink() {
+    function handleClick(e) {
+        e.preventDefault();
+        console.log('The link was clicked.');
+    }
+
+    return (
+        <a href="#" onClick={handleClick}>
+            Click me
+        </a>
+    );
+}
+
+ReactDOM.render(
+    <ActionLink />,
+    document.getElementById('ActionLink')
+);
+
+// property initializer syntax
+class LoggingButton extends React.Component {
+    // This syntax ensures `this` is bound within handleClick.
+    // Warning: this is *experimental* syntax.
+    handleClick = () => {
+        console.log('this is:', this);
+    }
+
+    render() {
+        return (
+            <button onClick={this.handleClick}>
+                Click me
+            </button>
+        );
+    }
+}
+
+ReactDOM.render(
+    <LoggingButton />,
+    document.getElementById('LoggingButton')
+);
+
+// arrow function
+class LoggingButtonArrow extends React.Component {
+    handleClick() {
+        console.log('this is:', this);
+    }
+
+    render() {
+        // This syntax ensures `this` is bound within handleClick
+        return (
+            <button onClick={(e) => this.handleClick(e)}>
+                Click me
+            </button>
+        );
+    }
+}
+
+ReactDOM.render(
+    <LoggingButtonArrow />,
+    document.getElementById('LoggingButtonArrow')
+);
+
+// Conditional Rendering
+function UserGreeting(props) {
+    return <h1>Welcome back!</h1>;
+}
+
+function GuestGreeting(props) {
+    return <h1>Please sign up.</h1>;
+}
+
+function Greeting(props) {
+    const isLoggedIn = props.isLoggedIn;
+    if (isLoggedIn) {
+        return <UserGreeting />;
+    }
+    return <GuestGreeting />;
+}
+
+ReactDOM.render(
+    // Try changing to isLoggedIn={true}:
+    <Greeting isLoggedIn={true} />,
+    document.getElementById('isLoggedIn')
+);
+
+
+// Element Variables
+class LoginControl extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleLoginClick = this.handleLoginClick.bind(this);
+        this.handleLogoutClick = this.handleLogoutClick.bind(this);
+        this.state = {isLoggedIn: false};
+    }
+
+    handleLoginClick() {
+        this.setState({isLoggedIn: true});
+    }
+
+    handleLogoutClick() {
+        this.setState({isLoggedIn: false});
+    }
+
+    render() {
+        const isLoggedIn = this.state.isLoggedIn;
+
+        let button = null;
+        if (isLoggedIn) {
+            button = <LogoutButton onClick={this.handleLogoutClick} />;
+        } else {
+            button = <LoginButton onClick={this.handleLoginClick} />;
+        }
+
+        return (
+            <div>
+                <Greeting isLoggedIn={isLoggedIn} />
+                {button}
+                <h1>------------</h1>
+                {isLoggedIn ? (
+                    <LogoutButton onClick={this.handleLogoutClick} />
+                ) : (
+                    <LoginButton onClick={this.handleLoginClick} />
+                )}
+            </div>
+        );
+    }
+}
+
+function LoginButton(props) {
+    return (
+        <button onClick={props.onClick}>
+            Login
+        </button>
+    );
+}
+
+function LogoutButton(props) {
+    return (
+        <button onClick={props.onClick}>
+            Logout
+        </button>
+    );
+}
+
+ReactDOM.render(
+    <LoginControl />,
+    document.getElementById('LoginControl')
+);
+
+// Inline If with Logical && Operator
+function Mailbox(props) {
+    const unreadMessages = props.unreadMessages;
+    return (
+        // It works because in JavaScript, true && expression always evaluates to expression,
+        // and false && expression always evaluates to false.
+        <div>
+            <h1>Hello!</h1>
+            {unreadMessages.length > 0 &&
+            <h2>
+                You have {unreadMessages.length} unread messages.
+            </h2>
+            }
+            {/*Inline If-Else with Conditional Operator*/}
+            <h1>Hello!</h1>
+            <h2>
+                You have {unreadMessages.length == 3 ? 'three' : unreadMessages.length} unread messages.
+            </h2>
+        </div>
+
+    );
+}
+
+const messages = ['React', 'Re: React', 'Re:Re: React'];
+ReactDOM.render(
+    <Mailbox unreadMessages={messages} />,
+    document.getElementById('Mailbox')
+);
+
+// Preventing Component from Rendering
+function WarningBanner(props) {
+    if (!props.warn) {
+        return null;
+    }
+
+    return (
+        <div className="warning">
+            Warning!
+        </div>
+    );
+}
+
+class Page extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {showWarning: true}
+        this.handleToggleClick = this.handleToggleClick.bind(this);
+    }
+
+    handleToggleClick() {
+        this.setState(prevState => ({
+            showWarning: !prevState.showWarning
+        }));
+    }
+
+    render() {
+        return (
+            <div>
+                <WarningBanner warn={this.state.showWarning} />
+                <button onClick={this.handleToggleClick}>
+                    {this.state.showWarning ? 'Hide' : 'Show'}
+                </button>
+            </div>
+        );
+    }
+}
+
+ReactDOM.render(
+    <Page />,
+    document.getElementById('Page')
+);
+
+// Rendering Multiple Components
+const numbers = [1, 2, 3, 4, 5];
+const listItems = numbers.map((number) =>
+    <li>{number}</li>
+);
+
+ReactDOM.render(
+    <ul>{listItems}</ul>,
+    document.getElementById('listItems')
+);
+
+// Basic List Component
+function NumberList1(props) {
+    const numbers = props.numbers;
+    const listItems = numbers.map((number) =>
+        <li key={number.toString()}>
+            {number}
+        </li>
+    );
+    return (
+        <ul>{listItems}</ul>
+    );
+}
+
+const numbers1 = [1, 2, 3, 4, 5];
+ReactDOM.render(
+    <NumberList1 numbers={numbers1} />,
+    document.getElementById('listItems1')
+);
+
+// When you don't have stable IDs for rendered items, you may use the item index as a key as a last resort
+function NumberList2(props) {
+    const numbers = props.numbers;
+    const listItems = numbers.map((number, index) =>
+        <li key={index}>
+            {number}
+        </li>
+    );
+    return (
+        <ul>{listItems}</ul>
+    );
+}
+
+const numbers2 = [1, 2, 3, 4, 5];
+ReactDOM.render(
+    <NumberList2 numbers={numbers2} />,
+    document.getElementById('listItems2')
+);
+
+// Extracting Components with Keys
+function ListItem3(props) {
+    // const value = props.value;
+    // return (
+    //     // Wrong! There is no need to specify the key here:
+    //     <li key={value.toString()}>
+    //         {value}
+    //     </li>
+    // );
+
+    // Correct! There is no need to specify the key here:
+    return <li>{props.value}</li>;
+}
+
+function NumberList3(props) {
+    const numbers = props.numbers;
+    const listItems = numbers.map((number) =>
+        // Wrong! The key should have been specified here:
+        // {/*<ListItem3 value={number} />*/}
+
+        // Correct! Key should be specified inside the array.
+        <ListItem3 key={number.toString()} value={number} />
+    );
+    return (
+        <ul>
+            {listItems}
+        </ul>
+    );
+}
+
+const numbers3 = [1, 2, 3, 4, 5];
+ReactDOM.render(
+    <NumberList3 numbers={numbers3} />,
+    document.getElementById('NumberList3')
+);
+
+// Keys Must Only Be Unique Among Siblings
+function Post(props) {
+    return (
+        <div key={props.id}>
+            <h3>Post : {props.title}</h3>
+            <p>Post : {props.content}</p>
+        </div>
+    );
+}
+function Blog(props) {
+    const sidebar = (
+        <ul>
+            {props.posts.map((post) =>
+                <li key={post.id}>
+                    {post.title}
+                </li>
+            )}
+        </ul>
+    );
+    const content = props.posts.map((post) =>
+        <div key={post.id}>
+            <h3>{post.title}</h3>
+            <p>{post.content}</p>
+        </div>
+    );
+
+    const contentPost = props.posts.map((post) =>
+        <Post
+            key={post.id}
+            id={post.id}
+            title={post.title} />
+    );
+
+    return (
+        <div>
+            {sidebar}
+            <hr />
+            {content}
+            <hr />
+            {contentPost}
+        </div>
+    );
+}
+
+const posts = [
+    {id: 1, title: 'Hello World', content: 'Welcome to learning React!'},
+    {id: 2, title: 'Installation', content: 'You can install React from npm.'}
+];
+ReactDOM.render(
+    <Blog posts={posts} />,
+    document.getElementById('Blog')
+);
+
+// Embedding map() in JSX
+function ListItem4(props) {
+    return <li>{props.value}</li>;
+}
+
+function NumberList4(props) {
+    const numbers = props.numbers;
+
+    // const listItems = numbers.map((number) =>
+    //     <ListItem4 key={number.toString()}
+    //               value={number} />
+    // );
+    //
+    // return (
+    //     <ul>
+    //         {listItems}
+    //     </ul>
+    // );
+
+    // Embedding
+    return (
+        <ul>
+            {
+                numbers.map((number) =>
+                    <ListItem4 key={number.toString()}
+                               value={number} />)
+            }
+        </ul>
+    );
+}
+
+const posts1 = ['a',7,'b',9,'c'];
+ReactDOM.render(
+    <NumberList4 numbers={posts1} />,
+    document.getElementById('NumberList4')
+);

@@ -771,3 +771,512 @@ ReactDOM.render(
     <NumberList4 numbers={posts1} />,
     document.getElementById('NumberList4')
 );
+
+// Controlled Components
+class NameForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {value: ''};
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(event) {
+        this.setState({value: event.target.value});
+    }
+
+    handleSubmit(event) {
+        alert('A name was submitted: ' + this.state.value);
+        event.preventDefault();
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    Name:
+                    <input type="text" value={this.state.value} onChange={this.handleChange} />
+                </label>
+                <input type="submit" value="Submit" />
+            </form>
+        );
+    }
+}
+
+ReactDOM.render(
+    <NameForm />,
+    document.getElementById('NameForm')
+);
+
+// The textarea Tag
+class EssayForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            value: 'Please write an essay about your favorite DOM element.'
+        };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(event) {
+        this.setState({value: event.target.value});
+    }
+
+    handleSubmit(event) {
+        alert('An essay was submitted: ' + this.state.value);
+        event.preventDefault();
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    Name:
+                    <textarea value={this.state.value} onChange={this.handleChange} />
+                </label>
+                <input type="submit" value="Submit" />
+            </form>
+        );
+    }
+}
+
+ReactDOM.render(
+    <EssayForm />,
+    document.getElementById('EssayForm')
+);
+
+// The select Tag
+class FlavorForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {value: 'coconut'};
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(event) {
+        this.setState({value: event.target.value});
+    }
+
+    handleSubmit(event) {
+        alert('Your favorite flavor is: ' + this.state.value);
+        event.preventDefault();
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    Pick your favorite La Croix flavor:
+                    <select value={this.state.value} onChange={this.handleChange}>
+                        <option value="grapefruit">Grapefruit</option>
+                        <option value="lime">Lime</option>
+                        <option value="coconut">Coconut</option>
+                        <option value="mango">Mango</option>
+                    </select>
+                </label>
+                <input type="submit" value="Submit" />
+            </form>
+        );
+    }
+}
+
+ReactDOM.render(
+    <FlavorForm />,
+    document.getElementById('FlavorForm')
+);
+
+
+// Handling Multiple Inputs
+class Reservation extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isGoing: true,
+            numberOfGuests: 2
+        };
+
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }
+
+    handleInputChange(event) {
+        const target = event.target;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        const name = target.name;
+
+        this.setState({
+            [name]: value
+        });
+    }
+
+    render() {
+        return (
+            <form>
+                <label>
+                    Is going:
+                    <input
+                        name="isGoing"
+                        type="checkbox"
+                        checked={this.state.isGoing}
+                        onChange={this.handleInputChange} />
+                </label>
+                <br />
+                <label>
+                    Number of guests:
+                    <input
+                        name="numberOfGuests"
+                        type="number"
+                        value={this.state.numberOfGuests}
+                        onChange={this.handleInputChange} />
+                </label>
+            </form>
+        );
+    }
+}
+
+ReactDOM.render(
+    <Reservation />,
+    document.getElementById('Reservation')
+);
+
+// Lifting State Up
+class Calculator extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.state = {value: ''};
+    }
+
+    handleChange(e) {
+        this.setState({value: e.target.value});
+    }
+
+    render() {
+        const value = this.state.value;
+        return (
+            <fieldset>
+                <legend>Enter temperature in Celsius:</legend>
+                <input
+                    value={value}
+                    onChange={this.handleChange} />
+                <BoilingVerdict
+                    celsius={parseFloat(value)} />
+            </fieldset>
+        );
+    }
+}
+
+function BoilingVerdict(props) {
+    if (props.celsius >= 100) {
+        return <p>The water would boil.</p>;
+    }
+    return <p>The water would not boil.</p>;
+}
+
+ReactDOM.render(
+    <Calculator />,
+    document.getElementById('Calculator')
+);
+
+
+const scaleNames = {
+    c: 'Celsius',
+    f: 'Fahrenheit'
+};
+
+class TemperatureInput extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+
+        this.state = {value: ''};
+
+
+    }
+
+    handleChange(e) {
+        this.setState({value: e.target.value});
+    }
+
+    render() {
+        const value = this.state.value;
+        const scale = this.props.scale;
+        return (
+            <fieldset>
+                <legend>Enter temperature in {scaleNames[scale]}:</legend>
+                <input value={value}
+                       onChange={this.handleChange} />
+                <BoilingVerdict
+                    celsius={parseFloat(value)} />
+            </fieldset>
+        );
+    }
+}
+
+class Calculator1 extends React.Component {
+    render() {
+        return (
+            <div>
+                <TemperatureInput scale="c" />
+                <TemperatureInput scale="f" />
+            </div>
+        );
+    }
+}
+
+ReactDOM.render(
+    <Calculator1 />,
+    document.getElementById('TemperatureInput')
+);
+
+// Lifting State Up , keep input sync
+const scaleNames2 = {
+    c: 'Celsius',
+    f: 'Fahrenheit'
+};
+
+function toCelsius(fahrenheit) {
+    return (fahrenheit - 32) * 5 / 9;
+}
+
+function toFahrenheit(celsius) {
+    return (celsius * 9 / 5) + 32;
+}
+
+function tryConvert(value, convert) {
+    const input = parseFloat(value);
+    if (Number.isNaN(input)) {
+        return '';
+    }
+    const output = convert(input);
+    const rounded = Math.round(output * 1000) / 1000;
+    return rounded.toString();
+}
+
+function BoilingVerdict2(props) {
+    if (props.celsius >= 100) {
+        return <p>The water would boil.</p>;
+    }
+    return <p>The water would not boil.</p>;
+}
+
+class TemperatureInput2 extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange(e) {
+        this.props.onChange(e.target.value);
+    }
+
+    render() {
+        const value = this.props.value;
+        const scale = this.props.scale;
+        return (
+            <fieldset>
+                <legend>Enter temperature in {scaleNames2[scale]}:</legend>
+                <input value={value}
+                       onChange={this.handleChange} />
+            </fieldset>
+        );
+    }
+}
+
+class Calculator2 extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
+        this.handleFahrenheitChange = this.handleFahrenheitChange.bind(this);
+        this.state = {value: '', scale: 'c'};
+    }
+
+    handleCelsiusChange(value) {
+        this.setState({scale: 'c', value});
+    }
+
+    handleFahrenheitChange(value) {
+        this.setState({scale: 'f', value});
+    }
+
+    render() {
+        const scale = this.state.scale;
+        const value = this.state.value;
+        const celsius = scale === 'f' ? tryConvert(value, toCelsius) : value;
+        const fahrenheit = scale === 'c' ? tryConvert(value, toFahrenheit) : value;
+
+        return (
+            <div>
+                <TemperatureInput2
+                    scale="c"
+                    value={celsius}
+                    onChange={this.handleCelsiusChange} />
+                <TemperatureInput2
+                    scale="f"
+                    value={fahrenheit}
+                    onChange={this.handleFahrenheitChange} />
+                <BoilingVerdict2
+                    celsius={parseFloat(celsius)} />
+            </div>
+        );
+    }
+}
+
+ReactDOM.render(
+    <Calculator2 />,
+    document.getElementById('Calculator2')
+);
+
+// Containment
+function FancyBorder(props) {
+    return (
+        <div className={'FancyBorder FancyBorder-' + props.color}>
+            {props.children}
+        </div>
+    );
+}
+
+function WelcomeDialog() {
+    return (
+        <FancyBorder color="blue">
+            <h1 className="Dialog-title">
+                Welcome
+            </h1>
+            <p className="Dialog-message">
+                Thank you for visiting our spacecraft1!
+            </p>
+        </FancyBorder>
+    );
+}
+
+ReactDOM.render(
+    <WelcomeDialog />,
+    document.getElementById('WelcomeDialog')
+);
+
+function Contacts() {
+    return <div className="Contacts" >Contacts</div>;
+}
+
+function Chat() {
+    return <div className="Chat" >Chat</div>;
+}
+
+function SplitPane(props) {
+    return (
+        <div className="SplitPane">
+            <div className="SplitPane-left">
+                {props.left}
+            </div>
+            <div className="SplitPane-right">
+                {props.right}
+            </div>
+        </div>
+    );
+}
+
+function App1() {
+    return (
+        <SplitPane
+            left={
+                <Contacts />
+            }
+            right={
+                <Chat />
+            } />
+    );
+}
+
+ReactDOM.render(
+    <App1 />,
+    document.getElementById('SplitPane')
+);
+
+// Containment
+function FancyBorder11(props) {
+    return (
+        <div className={'FancyBorder FancyBorder-' + props.color}>
+            {props.children}
+        </div>
+    );
+}
+
+function WelcomeDialog1() {
+    return (
+        <FancyBorder11 color="blue">
+            <h1 className="Dialog-title">
+                Welcome
+            </h1>
+            <p className="Dialog-message">
+                Thank you for visiting our spacecraft2!
+            </p>
+        </FancyBorder11>
+    );
+}
+
+ReactDOM.render(
+    <WelcomeDialog1 />,
+    document.getElementById('WelcomeDialog1')
+);
+
+// Specialization
+function FancyBorder2(props) {
+    return (
+        <div className={'FancyBorder FancyBorder-' + props.color}>
+            {props.children}
+        </div>
+    );
+}
+
+function Dialog(props) {
+    return (
+        <FancyBorder2 color="blue">
+            <h1 className="Dialog-title">
+                {props.title}
+            </h1>
+            <p className="Dialog-message">
+                {props.message}
+            </p>
+            {props.children}
+        </FancyBorder2>
+    );
+}
+
+class SignUpDialog extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSignUp = this.handleSignUp.bind(this);
+        this.state = {login: ''};
+    }
+
+    render() {
+        return (
+            <Dialog title="Mars Exploration Program"
+                    message="How should we refer to you?">
+                <input value={this.state.login}
+                       onChange={this.handleChange} />
+                <button onClick={this.handleSignUp}>
+                    Sign Me Up!
+                </button>
+            </Dialog>
+        );
+    }
+
+    handleChange(e) {
+        this.setState({login: e.target.value});
+    }
+
+    handleSignUp() {
+        alert(`Welcome aboard, ${this.state.login}!`);
+    }
+}
+
+ReactDOM.render(
+    <SignUpDialog />,
+    document.getElementById('SignUpDialog')
+);
